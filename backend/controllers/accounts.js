@@ -16,8 +16,39 @@ router.post('/', (req, res) => {
         'INSERT INTO accounts (user, pass, domain, alive, last_synced) VALUES (?, ?, ?, ?, ?)'
     );
     try {
-        stmt.run(user, pass, domain, alive, last_synced);
-        res.status(201).json({ message: 'Account added successfully' });
+        const info = stmt.run(user, pass, domain, alive, last_synced);
+        const newAccount = {
+            id: info.lastInsertRowid,
+            user,
+            pass,
+            domain,
+            alive,
+            last_synced,
+        };
+        res.status(201).json(newAccount);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+// Delete an account
+router.delete('/:id', (req, res) => {
+    const { id } = req.params;
+    const stmt = db.prepare('DELETE FROM accounts WHERE id = ?');
+    try {
+        stmt.run(id);
+        res.json({ message: 'Account deleted successfully' });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+// Delete all accounts
+router.delete('/', (req, res) => {
+    const stmt = db.prepare('DELETE FROM accounts');
+    try {
+        stmt.run();
+        res.json({ message: 'All accounts deleted successfully' });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Modal from './Modal';
+import accountService from '../services/accounts';
 
 const Config = () => {
     const [accounts, setAccounts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
-        axios
-            .get('/api/accounts')
-            .then((response) => {
-                setAccounts(response.data);
+        accountService
+            .getAllAccounts()
+            .then((accounts) => {
+                setAccounts(accounts);
             })
             .catch((error) => {
                 console.error(
@@ -20,8 +20,8 @@ const Config = () => {
             });
     }, []);
 
-    const handleImport = (inputValue) => {
-        const newAccounts = inputValue.split('\n').map((line) => {
+    const handleImport = (input) => {
+        const newAccounts = input.split('\n').map((line) => {
             const [user, pass] = line.split(':');
             return {
                 user,
@@ -33,15 +33,42 @@ const Config = () => {
         });
 
         newAccounts.forEach((account) => {
-            axios.post('/api/accounts', account).catch((error) => {
-                console.error('There was an error adding the account!', error);
-            });
+            accountService
+                .addAccount(account)
+                .then((addedAccount) => {
+                    setAccounts((existingAccounts) => [
+                        ...existingAccounts,
+                        addedAccount,
+                    ]);
+                })
+                .catch((error) => {
+                    console.error(
+                        'There was an error adding the account!',
+                        error
+                    );
+                });
         });
     };
 
     const getDomain = (email) => {
         const domain = email.split('@')[1];
         return domain;
+    };
+
+    const handleSync = () => {};
+
+    const handleDelete = () => {
+        accountService
+            .removeAllAccounts()
+            .then(() => {
+                setAccounts([]);
+            })
+            .catch((error) => {
+                console.error(
+                    'There was an error deleting the accounts!',
+                    error
+                );
+            });
     };
 
     return (
@@ -61,7 +88,12 @@ const Config = () => {
                     >
                         Import
                     </button>
-                    <button className='btn bg-purple-600'>Sync</button>
+                    <button className='btn bg-purple-600' onClick={handleSync}>
+                        Sync
+                    </button>
+                    <button className='btn bg-red-500' onClick={handleDelete}>
+                        Delete
+                    </button>
                 </div>
             </div>
             <div className='py-6 table w-full'>
@@ -70,7 +102,7 @@ const Config = () => {
                         <tr>
                             <th className='text-left'>Email</th>
                             <th className='text-left'>Status</th>
-                            <th className='text-left'>Last Sync</th>
+                            <th className='text-left'>Last Synced</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Inbox from './components/Inbox';
 import Config from './components/Config';
 
+
 const App = () => {
     return (
         <Router>
