@@ -20,9 +20,15 @@ const removeAllAccounts = async () => {
     return response.data;
 };
 
+const syncAccount = async (id) => {
+    const response = await axios.post(`${baseUrl}/sync/${id}`);
+    return response.data;
+};
+
 export default {
     getAllAccounts,
     removeAccount,
     addAccount,
     removeAllAccounts,
+    syncAccount,
 };

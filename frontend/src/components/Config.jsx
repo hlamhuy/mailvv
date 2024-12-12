@@ -55,9 +55,29 @@ const Config = () => {
         return domain;
     };
 
-    const handleSync = () => {};
+    const handleSyncAll = () => {
+        accounts.forEach((account) => {
+            accountService
+                .syncAccount(account.id)
+                .then((updatedAccount) => {
+                    setAccounts((existingAccounts) =>
+                        existingAccounts.map((existingAccount) =>
+                            existingAccount.id === updatedAccount.id
+                                ? updatedAccount
+                                : existingAccount
+                        )
+                    );
+                })
+                .catch((error) => {
+                    console.error(
+                        'There was an error syncing the account!',
+                        error
+                    );
+                });
+        });
+    };
 
-    const handleDelete = () => {
+    const handleDeleteAll = () => {
         accountService
             .removeAllAccounts()
             .then(() => {
@@ -74,13 +94,7 @@ const Config = () => {
     return (
         <div className='px-60 py-10'>
             <div className='flex justify-between w-full'>
-                <div className='flex space-x-6'>
-                    <button className='btn bg-orange-500'>All</button>
-                    <button className='btn bg-orange-500'>Gmail</button>
-                    <button className='btn bg-orange-500'>Hotmail</button>
-                    <button className='btn bg-orange-500'>Yahoo</button>
-                    <button className='btn bg-orange-500'>iCloud</button>
-                </div>
+                <div className='flex space-x-6'></div>
                 <div className='flex space-x-6'>
                     <button
                         className='btn bg-green-500'
@@ -88,10 +102,16 @@ const Config = () => {
                     >
                         Import
                     </button>
-                    <button className='btn bg-purple-600' onClick={handleSync}>
+                    <button
+                        className='btn bg-purple-600'
+                        onClick={handleSyncAll}
+                    >
                         Sync
                     </button>
-                    <button className='btn bg-red-500' onClick={handleDelete}>
+                    <button
+                        className='btn bg-red-500'
+                        onClick={handleDeleteAll}
+                    >
                         Delete
                     </button>
                 </div>
@@ -108,10 +128,7 @@ const Config = () => {
                                             type='checkbox'
                                             className='w-4 h-4'
                                         />
-                                        <label
-                                            for='checkbox-all-search'
-                                            className='sr-only'
-                                        >
+                                        <label className='sr-only'>
                                             checkbox
                                         </label>
                                     </div>
@@ -133,17 +150,14 @@ const Config = () => {
                                     key={account.id}
                                     className=' odd:bg-gray-800  even:bg-gray-700 border-b border-gray-700'
                                 >
-                                    <td class='w-4 p-4'>
+                                    <td className='w-4 p-4'>
                                         <div className='flex items-center'>
                                             <input
                                                 id='checkbox-table-search'
                                                 type='checkbox'
-                                                class='w-4 h-4'
+                                                className='w-4 h-4'
                                             />
-                                            <label
-                                                for='checkbox-table-search'
-                                                class='sr-only'
-                                            >
+                                            <label className='sr-only'>
                                                 checkbox
                                             </label>
                                         </div>
@@ -175,80 +189,7 @@ const Config = () => {
                     </table>
                 </div>
             </div>
-            <nav
-                class='flex items-center flex-column flex-wrap md:flex-row justify-between pt-4'
-                aria-label='Table navigation'
-            >
-                <span class='text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto'>
-                    Showing{' '}
-                    <span class='font-semibold text-gray-900 dark:text-white'>
-                        1-10
-                    </span>{' '}
-                    of{' '}
-                    <span class='font-semibold text-gray-900 dark:text-white'>
-                        1000
-                    </span>
-                </span>
-                <ul class='inline-flex -space-x-px rtl:space-x-reverse text-sm h-8'>
-                    <li>
-                        <a
-                            href='#'
-                            class='flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-                        >
-                            Previous
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href='#'
-                            class='flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-                        >
-                            1
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href='#'
-                            class='flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-                        >
-                            2
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href='#'
-                            aria-current='page'
-                            class='flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white'
-                        >
-                            3
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href='#'
-                            class='flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-                        >
-                            4
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href='#'
-                            class='flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-                        >
-                            5
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href='#'
-                            class='flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-                        >
-                            Next
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+
             <Modal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
