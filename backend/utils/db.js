@@ -13,6 +13,27 @@ const initializeDatabase = () => {
             UNIQUE(user)          
         )
     `);
+
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS mails (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,            
+            subject TEXT NOT NULL,
+            date TIMESTAMP NOT NULL,            
+        )
+    `);
+
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS origins (
+            CREATE TABLE IF NOT EXISTS origins (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            mail_id INTEGER NOT NULL,
+            account_id INTEGER NOT NULL,
+            pid INTEGER NOT NULL,
+            FOREIGN KEY (mail_id) REFERENCES mails(id),
+            FOREIGN KEY (account_id) REFERENCES accounts(id)
+        )
+        )
+    `);
 };
 
 module.exports = { initializeDatabase };
