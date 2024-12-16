@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Modal = ({ isOpen, onClose, onSubmit }) => {
+const ImportModal = ({ isOpen, onClose, onSubmit }) => {
     const [input, setInput] = React.useState('');
 
     if (!isOpen) return null;
@@ -44,4 +44,4 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
     );
 };
 
-export default Modal;
+export default ImportModal;
