@@ -30,8 +30,7 @@ const initializeDatabase = () => {
             account_id INTEGER NOT NULL,
             pid INTEGER NOT NULL,
             FOREIGN KEY (mail_id) REFERENCES mails(id),
-            FOREIGN KEY (account_id) REFERENCES accounts(id)
-        )
+            FOREIGN KEY (account_id) REFERENCES accounts(id)   
         )
     `);
 };
