@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const Database = require('better-sqlite3');
-const db = new Database('accounts.db');
+const db = new Database('tokki.db');
 const { ImapFlow } = require('imapflow');
 
 const getHost = (domain) => {
