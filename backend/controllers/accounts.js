@@ -96,6 +96,7 @@ router.delete('/', (req, res) => {
     }
 });
 
+// Sync individual account
 router.post('/sync/:id', async (req, res) => {
     const { id } = req.params;
     const stmt = db.prepare(

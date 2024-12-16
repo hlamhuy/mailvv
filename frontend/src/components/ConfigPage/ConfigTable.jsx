@@ -1,4 +1,5 @@
 import React from 'react';
+import { format as dateFormatter } from 'date-fns';
 
 const ConfigTable = ({
     accounts,
@@ -6,6 +7,12 @@ const ConfigTable = ({
     handleSelectAll,
     handleSelectAccount,
 }) => {
+    const formatDate = (timestamp) => {
+        if (!timestamp) return '-';
+        const date = new Date(timestamp * 1000); // Convert Unix timestamp to milliseconds
+        return dateFormatter(date, 'MM/dd/yyyy hh:mm:ss a');
+    };
+
     return (
         <div className='pt-6'>
             <div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
@@ -70,7 +77,7 @@ const ConfigTable = ({
                                 </td>
                                 <td className='px-6 py-4'>
                                     <div
-                                        className={`w-4 h-4 rounded-full ${
+                                        className={`w-4 h-4 rounded-full ml-3 ${
                                             account.alive
                                                 ? 'bg-green-500'
                                                 : 'bg-red-500'
@@ -78,7 +85,7 @@ const ConfigTable = ({
                                     ></div>
                                 </td>
                                 <td className='px-6 py-4'>
-                                    {account.last_synced || '-'}
+                                    {formatDate(account.last_synced)}
                                 </td>
                             </tr>
                         ))}

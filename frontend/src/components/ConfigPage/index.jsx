@@ -120,6 +120,7 @@ const Config = () => {
     };
 
     const handleSyncAll = () => {
+        // Sync all accounts one by one
         accounts.forEach((account) => {
             accountService
                 .syncAccount(account.id)
