@@ -18,18 +18,20 @@ const initializeDatabase = () => {
         CREATE TABLE IF NOT EXISTS mails (
             id INTEGER PRIMARY KEY AUTOINCREMENT,            
             subject TEXT NOT NULL,
-            date TIMESTAMP NOT NULL         
+            sender TEXT NOT NULL
         );
     `);
 
     db.exec(`
         CREATE TABLE IF NOT EXISTS origins (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
             mail_id INTEGER NOT NULL,
             account_id INTEGER NOT NULL,
-            pid INTEGER NOT NULL,
+            uid INTEGER NOT NULL,
+            date TIMESTAMP NOT NULL,
+            PRIMARY KEY (mail_id, account_id, uid),
             FOREIGN KEY (mail_id) REFERENCES mails(id),
-            FOREIGN KEY (account_id) REFERENCES accounts(id)
+            FOREIGN KEY (account_id) REFERENCES accounts(id),
+            UNIQUE(uid)
         );
     `);
 };
