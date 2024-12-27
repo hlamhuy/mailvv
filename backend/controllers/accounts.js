@@ -1,48 +1,7 @@
 const router = require('express').Router();
 const Database = require('better-sqlite3');
 const db = new Database('tokki.db');
-const { ImapFlow } = require('imapflow');
-
-const getHost = (domain) => {
-    switch (domain) {
-        case 'yahoo.com':
-            return 'imap.mail.yahoo.com';
-        case 'hotmail.com':
-        case 'outlook.com':
-            return 'imap-mail.outlook.com';
-        case 'gmail.com':
-            return 'imap.gmail.com';
-        case 'icloud.com':
-            return 'imap.mail.me.com';
-        default:
-            throw new Error(`Unsupported email domain: ${domain}`);
-    }
-};
-
-const syncAccount = async (id) => {
-    const stmt = db.prepare('SELECT * FROM accounts WHERE id = ?');
-    const account = stmt.get(id);
-    const host = getHost(account.domain);
-
-    const client = new ImapFlow({
-        host: host,
-        port: 993,
-        secure: true,
-        auth: {
-            user: account.user,
-            pass: account.pass,
-        },
-    });
-
-    try {
-        await client.connect();
-        return 1;
-    } catch (error) {
-        return 0;
-    } finally {
-        await client.logout();
-    }
-};
+const { syncAccount } = require('../utils/sync');
 
 // Get all accounts
 router.get('/', (req, res) => {
@@ -103,7 +62,8 @@ router.post('/sync/:id', async (req, res) => {
         'UPDATE accounts SET alive = ?, last_synced = ? WHERE id = ?'
     );
     try {
-        const result = await syncAccount(id);
+        console.log('Syncing account: ', id);
+        const result = await syncAccount(db, id);
         stmt.run(result, Math.floor(Date.now() / 1000), id);
         const syncedAccount = db
             .prepare('SELECT * FROM accounts WHERE id = ?')
