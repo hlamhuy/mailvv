@@ -19,7 +19,8 @@ const initializeDatabase = () => {
         CREATE TABLE IF NOT EXISTS mails (
             id INTEGER PRIMARY KEY AUTOINCREMENT,            
             subject TEXT NOT NULL,
-            sender TEXT NOT NULL
+            sender TEXT NOT NULL,
+            most_recent TIMESTAMP NOT NULL
         );
     `);
 
@@ -34,6 +35,17 @@ const initializeDatabase = () => {
             FOREIGN KEY (account_id) REFERENCES accounts(id),
             UNIQUE(uid)
         );
+    `);
+
+    db.exec(`
+        CREATE TRIGGER IF NOT EXISTS update_most_recent
+        AFTER INSERT ON origins
+        FOR EACH ROW
+        BEGIN
+            UPDATE mails
+            SET most_recent = NEW.date
+            WHERE id = NEW.mail_id;
+        END;
     `);
 };
 

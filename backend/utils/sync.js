@@ -17,7 +17,9 @@ const getHost = (domain) => {
 };
 
 const syncAccount = async (db, accountId) => {
-    const account = db.prepare('SELECT * FROM accounts WHERE id = ?').get(accountId);
+    const account = db
+        .prepare('SELECT * FROM accounts WHERE id = ?')
+        .get(accountId);
     const host = getHost(account.domain);
 
     const client = new ImapFlow({
@@ -92,9 +94,15 @@ const mailInsert = (db, mail) => {
     const id = existed
         ? existed.id
         : db
-              .prepare('INSERT INTO mails (subject, sender) VALUES (?, ?)')
-              .run(mail.envelope.subject, mail.envelope.from[0].name)
-              .lastInsertRowid;
+              .prepare(
+                  'INSERT INTO mails (subject, sender, most_recent) VALUES (?, ?, ?)'
+              )
+              .run(
+                  mail.envelope.subject,
+                  mail.envelope.from[0].name,
+                  Math.floor(mail.envelope.date.getTime() / 1000)
+              ).lastInsertRowid;
+
     return id;
 };
 
@@ -107,6 +115,11 @@ const originInsert = (db, mailId, accountId, mail) => {
         accountId,
         mail.uid,
         Math.floor(mail.envelope.date.getTime() / 1000)
+    );
+
+    db.prepare('UPDATE mails SET most_recent = ? WHERE id = ?').run(
+        Math.floor(mail.envelope.date.getTime() / 1000),
+        mailId
     );
 };
 module.exports = { syncAccount };

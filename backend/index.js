@@ -1,5 +1,6 @@
 const express = require('express');
 const accountsRouter = require('./controllers/accounts.js');
+const mailsRouter = require('./controllers/mails.js');
 const { initializeDatabase } = require('./utils/db');
 
 const app = express();
@@ -9,6 +10,7 @@ initializeDatabase();
 
 app.use(express.json());
 app.use('/api/accounts', accountsRouter);
+app.use('/api/mails', mailsRouter);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
