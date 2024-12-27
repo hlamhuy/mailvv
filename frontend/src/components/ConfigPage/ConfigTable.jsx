@@ -41,6 +41,9 @@ const ConfigTable = ({
                                 Status
                             </th>
                             <th scope='col' className='px-6 py-3'>
+                                Mail Amount
+                            </th>
+                            <th scope='col' className='px-6 py-3'>
                                 Last Synced
                             </th>
                         </tr>
@@ -84,6 +87,7 @@ const ConfigTable = ({
                                         }`}
                                     ></div>
                                 </td>
+                                <td className='px-6 py-4'>{account.amount}</td>
                                 <td className='px-6 py-4'>
                                     {formatDate(account.last_synced)}
                                 </td>

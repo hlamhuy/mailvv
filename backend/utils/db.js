@@ -10,7 +10,6 @@ const initializeDatabase = () => {
             domain TEXT NOT NULL,
             alive INTEGER,
             amount INTEGER DEFAULT 0,
-            prev_amount INTEGER DEFAULT 0,
             last_synced TIMESTAMP,
             UNIQUE(user)          
         );

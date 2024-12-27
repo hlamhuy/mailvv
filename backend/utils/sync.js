@@ -17,8 +17,7 @@ const getHost = (domain) => {
 };
 
 const syncAccount = async (db, accountId) => {
-    const stmt = db.prepare('SELECT * FROM accounts WHERE id = ?');
-    const account = stmt.get(accountId);
+    const account = db.prepare('SELECT * FROM accounts WHERE id = ?').get(accountId);
     const host = getHost(account.domain);
 
     const client = new ImapFlow({
@@ -63,10 +62,11 @@ const syncAccount = async (db, accountId) => {
                 // insert into origins table
                 originInsert(db, insertedId, accountId, mail);
 
-                // update prev amount in accounts table
-                db.prepare(
-                    'UPDATE accounts SET prev_amount = ? WHERE id = ?'
-                ).run(status.messages, accountId);
+                // update amount in accounts table
+                db.prepare('UPDATE accounts SET amount = ? WHERE id = ?').run(
+                    newAmount,
+                    accountId
+                );
             }
         } catch (e) {
             console.log('Error when fetching mails: ', e);
