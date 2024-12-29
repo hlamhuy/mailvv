@@ -109,10 +109,11 @@ const mailInsert = (db, mail) => {
 // insert into origins table
 const originInsert = (db, mailId, accountId, mail) => {
     db.prepare(
-        'INSERT OR IGNORE INTO origins (mail_id, account_id, uid, date) VALUES (?, ?, ?, ?)'
+        'INSERT OR IGNORE INTO origins (mail_id, account_id, recipient, uid, date) VALUES (?, ?, ?, ?, ?)'
     ).run(
         mailId,
         accountId,
+        mail.envelope.to[0].address,
         mail.uid,
         Math.floor(mail.envelope.date.getTime() / 1000)
     );

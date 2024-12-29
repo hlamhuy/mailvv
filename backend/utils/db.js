@@ -28,6 +28,7 @@ const initializeDatabase = () => {
         CREATE TABLE IF NOT EXISTS origins (
             mail_id INTEGER NOT NULL,
             account_id INTEGER NOT NULL,
+            recipient TEXT NOT NULL,
             uid INTEGER NOT NULL,
             date TIMESTAMP NOT NULL,
             PRIMARY KEY (mail_id, account_id, uid),

@@ -8,4 +8,11 @@ router.get('/', (req, res) => {
     res.json(mails);
 });
 
+router.get('/:id', (req, res) => {
+    const { id } = req.params;
+    const stmt = db.prepare(`SELECT * FROM origins WHERE mail_id = ?`);
+    const recipients = stmt.all(id);
+    res.json(recipients);
+});
+
 module.exports = router;

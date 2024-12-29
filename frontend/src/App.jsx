@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import Inbox from './components/Inbox';
+import Inbox from './components/InboxPage';
 import Config from './components/ConfigPage';
 
 const App = () => {
