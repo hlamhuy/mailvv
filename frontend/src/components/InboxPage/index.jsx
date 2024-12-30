@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import mailService from '../../services/mails';
 import MailContainer from './MailContainer';
 import { format as dateFormatter } from 'date-fns';
+import HtmlParser from 'html-react-parser';
 
 const Inbox = () => {
     const [mails, setMails] = useState([]);
     const [recipients, setRecipients] = useState([]);
+    const [content, setContent] = useState('');
 
     const formatDate = (timestamp) => {
         if (!timestamp) return '-';
@@ -28,7 +30,6 @@ const Inbox = () => {
         mailService
             .getMailRecipients(mailId)
             .then((fetchedRecipients) => {
-                console.log(fetchedRecipients);
                 setRecipients(fetchedRecipients);
             })
             .catch((error) => {
@@ -39,8 +40,20 @@ const Inbox = () => {
             });
     };
 
-    const handleRecipientClick = (uid) => {
-        console.log('Recipient clicked: ', uid);
+    const handleRecipientClick = (uid, accountId) => {
+        console.log('Passing: ', uid, accountId);
+        mailService
+            .getMailContent(uid, accountId)
+            .then((fetchedContent) => {
+                //console.log('Fetched content: ', fetchedContent);
+                setContent(fetchedContent);
+            })
+            .catch((error) => {
+                console.error(
+                    'There was an error fetching the content!',
+                    error
+                );
+            });
     };
 
     return (
@@ -83,14 +96,19 @@ const Inbox = () => {
                         <div
                             key={index}
                             className='p-1 pl-4 border-b-1 border-gray-600 text-xs hover:bg-neutral-700'
-                            onClick={() => handleRecipientClick(recipient.uid)}
+                            onClick={() =>
+                                handleRecipientClick(
+                                    recipient.uid,
+                                    recipient.account_id
+                                )
+                            }
                         >
                             {recipient.recipient}
                         </div>
                     ))}
                 </div>
                 <div className='overflow-y-auto w-7/12 h-full [&::-webkit-scrollbar]:w-0.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400'>
-                    content
+                    {HtmlParser(content)}
                 </div>
             </div>
         </div>

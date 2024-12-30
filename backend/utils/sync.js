@@ -1,20 +1,6 @@
 const { ImapFlow } = require('imapflow');
+const { getHost } = require('./host');
 
-const getHost = (domain) => {
-    switch (domain) {
-        case 'yahoo.com':
-            return 'imap.mail.yahoo.com';
-        case 'hotmail.com':
-        case 'outlook.com':
-            return 'imap-mail.outlook.com';
-        case 'gmail.com':
-            return 'imap.gmail.com';
-        case 'icloud.com':
-            return 'imap.mail.me.com';
-        default:
-            throw new Error(`Unsupported email domain: ${domain}`);
-    }
-};
 
 const syncAccount = async (db, accountId) => {
     const account = db

@@ -11,10 +11,16 @@ const getMailRecipients = async (mailId) => {
     return response.data;
 };
 
-const getMailUid = async (id) => {
-}
+const getMailContent = async (uid, accountId) => {
+    const response = await axios.post(`${baseUrl}/content/${uid}`, {
+        uid,
+        account_id: accountId,
+    });
+    return response.data;
+};
 
 export default {
     getAllMails,
     getMailRecipients,
+    getMailContent,
 };
