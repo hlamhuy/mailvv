@@ -44,9 +44,10 @@ const Config = () => {
     const handleImport = (input) => {
         const newAccounts = input.split('\n').map((line) => {
             const [user, pass] = line.split(':');
+            const sanitizedPass = pass.replace(/[\s-]/g, '');
             return {
                 user,
-                pass,
+                pass: sanitizedPass,
                 domain: getDomain(user),
                 alive: null,
                 last_synced: null,

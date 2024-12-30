@@ -85,7 +85,7 @@ const Inbox = () => {
                                 id={mail.id}
                                 sender={mail.sender}
                                 subject={mail.subject}
-                                count={mail.count}
+                                amount={mail.amount}
                                 date={formatDate(mail.most_recent)}
                             />
                         </div>

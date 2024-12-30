@@ -81,15 +81,23 @@ const ConfigTable = ({
                                 <td className='px-6 py-4'>
                                     <div
                                         className={`w-4 h-4 rounded-full ml-3 ${
-                                            account.alive
+                                            account.alive === null
+                                                ? 'bg-orange-500'
+                                                : account.alive
                                                 ? 'bg-green-500'
                                                 : 'bg-red-500'
                                         }`}
                                     ></div>
                                 </td>
-                                <td className='px-6 py-4'>{account.amount}</td>
                                 <td className='px-6 py-4'>
-                                    {formatDate(account.last_synced)}
+                                    {account.amount === 0
+                                        ? '0'
+                                        : account.amount}
+                                </td>
+                                <td className='px-6 py-4'>
+                                    {account.last_synced === null
+                                        ? 'NEVER SYNCED'
+                                        : formatDate(account.last_synced)}
                                 </td>
                             </tr>
                         ))}

@@ -23,7 +23,7 @@ router.post('/content/:uid', async (req, res) => {
         .prepare(`SELECT * FROM accounts WHERE id = ?`)
         .get(account_id);
     const content = await getContent(uid, account);
-    console.log(content);
+    //console.log(content);
     res.json(content);
 });
 module.exports = router;
