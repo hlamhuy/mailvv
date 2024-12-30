@@ -20,7 +20,8 @@ const initializeDatabase = () => {
             id INTEGER PRIMARY KEY AUTOINCREMENT,            
             subject TEXT NOT NULL,
             sender TEXT NOT NULL,
-            most_recent TIMESTAMP NOT NULL
+            most_recent TIMESTAMP NOT NULL,
+            amount INTEGER DEFAULT 0
         );
     `);
 
@@ -39,12 +40,14 @@ const initializeDatabase = () => {
     `);
 
     db.exec(`
-        CREATE TRIGGER IF NOT EXISTS update_most_recent
+        CREATE TRIGGER IF NOT EXISTS update_mail_info
         AFTER INSERT ON origins
         FOR EACH ROW
         BEGIN
             UPDATE mails
-            SET most_recent = NEW.date
+            SET 
+                most_recent = NEW.date
+                amount = amount + 1
             WHERE id = NEW.mail_id;
         END;
     `);
