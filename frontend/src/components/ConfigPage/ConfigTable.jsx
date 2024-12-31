@@ -1,12 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { format as dateFormatter } from 'date-fns';
-
+import PageNavigation from './PageNavigation';
 const ConfigTable = ({
     accounts,
     selectedAccounts,
     handleSelectAll,
     handleSelectAccount,
 }) => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 15;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const selectedAccountsPage = accounts.slice(
+        startIndex,
+        startIndex + itemsPerPage
+    );
+    const totalPages = Math.ceil(accounts.length / itemsPerPage);
+
+    const handleClickPage = (page) => {
+        setCurrentPage(page);
+    };
+
     const formatDate = (timestamp) => {
         if (!timestamp) return '-';
         const date = new Date(timestamp * 1000); // Convert Unix timestamp to milliseconds
@@ -49,7 +62,7 @@ const ConfigTable = ({
                         </tr>
                     </thead>
                     <tbody>
-                        {accounts.map((account) => (
+                        {selectedAccountsPage.map((account) => (
                             <tr
                                 key={account.id}
                                 className='odd:bg-gray-800 even:bg-gray-700 border-b border-gray-700'
@@ -96,7 +109,7 @@ const ConfigTable = ({
                                 </td>
                                 <td className='px-6 py-4'>
                                     {account.last_synced === null
-                                        ? 'NEVER SYNCED'
+                                        ? 'Never'
                                         : formatDate(account.last_synced)}
                                 </td>
                             </tr>
@@ -104,6 +117,13 @@ const ConfigTable = ({
                     </tbody>
                 </table>
             </div>
+            <PageNavigation
+                currentPage={currentPage}
+                totalPages={totalPages}
+                itemsPerPage={itemsPerPage}
+                accountsLength={accounts.length}
+                handleClickPage={handleClickPage}
+            />
         </div>
     );
 };
