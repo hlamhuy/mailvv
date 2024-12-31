@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ActionButton from './ActionButton';
 
 const ActionBar = ({
     onImport,
@@ -9,17 +10,13 @@ const ActionBar = ({
     selectedAccounts,
 }) => {
     const [isFilterSelect, setIsFilterSelect] = useState(false);
-    const [isActionSelect, setIsActionSelect] = useState(false);
 
     const toggleFilter = () => {
         setIsFilterSelect(!isFilterSelect);
     };
-    const toggleAction = () => {
-        setIsActionSelect(!isActionSelect);
-    };
 
     return (
-        <div className='flex items-center mx-auto justify-between w-full'>
+        <div className='flex flex-row items-center mx-auto w-full'>
             {/* Search bar */}
             <div>
                 <label htmlFor='table-search' className='sr-only'>
@@ -86,49 +83,15 @@ const ActionBar = ({
                 )}
             </div>
             {/* Action buttons */}
-            <div className='ml-auto relative inline-block text-left z-30'>
-                <button
-                    id='action-button'
-                    className='rounded-lg px-4 py-2 bg-blue-800 hover:bg-blue-900 inline-flex items-center gap-x-1.5 justify-center'
-                    type='button'
-                    onClick={toggleAction}
-                >
-                    Action
-                    <svg
-                        className='w-2.5 h-2.5 ml-1'
-                        aria-hidden='true'
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 10 6'
-                    >
-                        <path
-                            stroke='currentColor'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            strokeWidth='2'
-                            d='m1 1 4 4 4-4'
-                        />
-                    </svg>
-                </button>
-                {isActionSelect && (
-                    <div className='absolute origin-top-right z-10 w-48 divide-y rounded-lg shadow right-0 mt-2 bg-blue-500 divide-gray-600'>
-                        <div className='py-2'>
-                            <Action label='Import' onClick={onImport} />
-                            <Action
-                                label='Sync Selected'
-                                onClick={onSyncSelected}
-                                disabled={selectedAccounts.length === 0}
-                            />
-                            <Action
-                                label='Delete Selected'
-                                onClick={onDeleteSelected}
-                                disabled={selectedAccounts.length === 0}
-                            />
-                            <Action label='Sync All' onClick={onSyncAll} />
-                            <Action label='Delete All' onClick={onDeleteAll} />
-                        </div>
-                    </div>
-                )}
+            <div className='ml-auto'>
+                <ActionButton
+                    onImport={onImport}
+                    onSyncAll={onSyncAll}
+                    onDeleteAll={onDeleteAll}
+                    onSyncSelected={onSyncSelected}
+                    onDeleteSelected={onDeleteSelected}
+                    selectedAccounts={selectedAccounts}
+                />
             </div>
         </div>
     );

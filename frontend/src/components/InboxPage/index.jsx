@@ -41,7 +41,7 @@ const Inbox = () => {
     };
 
     const handleRecipientClick = (uid, accountId) => {
-        console.log('Passing: ', uid, accountId);
+        //console.log('Passing: ', uid, accountId);
         mailService
             .getMailContent(uid, accountId)
             .then((fetchedContent) => {

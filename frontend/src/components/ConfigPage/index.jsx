@@ -100,24 +100,26 @@ const Config = () => {
     };
 
     const handleDeleteSelected = () => {
-        selectedAccounts.forEach((accountId) => {
-            accountService
-                .removeAccount(accountId)
-                .then(() => {
-                    setAccounts((existingAccounts) =>
-                        existingAccounts.filter(
-                            (existingAccount) =>
-                                existingAccount.id !== accountId
-                        )
-                    );
-                })
-                .catch((error) => {
-                    console.error(
-                        'There was an error deleting the account!',
-                        error
-                    );
-                });
-        });
+        const deletePromises = selectedAccounts.map((accountId) =>
+            accountService.removeAccount(accountId)
+        );
+
+        Promise.all(deletePromises)
+            .then(() => {
+                setAccounts((existingAccounts) =>
+                    existingAccounts.filter(
+                        (existingAccount) =>
+                            !selectedAccounts.includes(existingAccount.id)
+                    )
+                );
+                setSelectedAccounts([]); // Clear selected accounts
+            })
+            .catch((error) => {
+                console.error(
+                    'There was an error deleting the accounts!',
+                    error
+                );
+            });
     };
 
     const handleSyncAll = () => {
