@@ -54,22 +54,17 @@ const Config = () => {
             };
         });
 
-        newAccounts.forEach((account) => {
-            accountService
-                .addAccount(account)
-                .then((addedAccount) => {
-                    setAccounts((existingAccounts) => [
-                        ...existingAccounts,
-                        addedAccount,
-                    ]);
-                })
-                .catch((error) => {
-                    console.error(
-                        'There was an error adding the account!',
-                        error
-                    );
-                });
-        });
+        accountService
+            .addAccount(newAccounts)
+            .then(() => {
+                setAccounts((existingAccounts) => [
+                    ...existingAccounts,
+                    ...newAccounts,
+                ]);
+            })
+            .catch((error) => {
+                console.error('There was an error adding the accounts!', error);
+            });
     };
 
     const getDomain = (email) => {

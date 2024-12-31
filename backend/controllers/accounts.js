@@ -10,23 +10,21 @@ router.get('/', (req, res) => {
     res.json(accounts);
 });
 
-// Add a new account
+// Add new accounts
 router.post('/', (req, res) => {
-    const { user, pass, domain, alive, last_synced } = req.body;
+    const accounts = req.body;
     const stmt = db.prepare(
         'INSERT INTO accounts (user, pass, domain, alive, last_synced) VALUES (?, ?, ?, ?, ?)'
     );
+    const insertMany = db.transaction((accounts) => {
+        for (const account of accounts) {
+            stmt.run(account.user, account.pass, account.domain, account.alive, account.last_synced);
+        }
+    });
+
     try {
-        const info = stmt.run(user, pass, domain, alive, last_synced);
-        const newAccount = {
-            id: info.lastInsertRowid,
-            user,
-            pass,
-            domain,
-            alive,
-            last_synced,
-        };
-        res.status(201).json(newAccount);
+        insertMany(accounts);
+        res.status(201).json({ message: 'Accounts added successfully' });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
