@@ -8,6 +8,7 @@ const Inbox = () => {
     const [mails, setMails] = useState([]);
     const [recipients, setRecipients] = useState([]);
     const [content, setContent] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const formatDate = (timestamp) => {
         if (!timestamp) return '-';
@@ -41,12 +42,14 @@ const Inbox = () => {
     };
 
     const handleRecipientClick = (uid, accountId) => {
+        setLoading(true);
         //console.log('Passing: ', uid, accountId);
         mailService
             .getMailContent(uid, accountId)
             .then((fetchedContent) => {
                 //console.log('Fetched content: ', fetchedContent);
                 setContent(fetchedContent);
+                setLoading(false);
             })
             .catch((error) => {
                 console.error(
@@ -108,7 +111,7 @@ const Inbox = () => {
                     ))}
                 </div>
                 <div className='overflow-y-auto w-7/12 h-full [&::-webkit-scrollbar]:w-0.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400'>
-                    {HtmlParser(content)}
+                    {loading ? <div>Loading...</div> : HtmlParser(content)}
                 </div>
             </div>
         </div>
