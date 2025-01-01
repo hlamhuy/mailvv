@@ -54,8 +54,16 @@ const Config = () => {
             };
         });
 
+        const accountsToAdd = newAccounts.filter(
+            (newAccount) =>
+                !accounts.some((account) => account.user === newAccount.user)
+        );
+        console.log(
+            'Duplicate entries: ',
+            newAccounts.length - accountsToAdd.length
+        );
         accountService
-            .addAccount(newAccounts)
+            .addAccount(accountsToAdd)
             .then(() => {
                 setAccounts((existingAccounts) => [
                     ...existingAccounts,
