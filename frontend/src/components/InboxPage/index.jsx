@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import mailService from '../../services/mails';
 import MailContainer from './MailContainer';
-import { format as dateFormatter } from 'date-fns';
+import RecipientContainer from './RecipientContainer';
 import HtmlParser from 'html-react-parser';
 
 const Inbox = () => {
@@ -10,17 +10,14 @@ const Inbox = () => {
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const formatDate = (timestamp) => {
-        if (!timestamp) return '-';
-        const date = new Date(timestamp * 1000);
-        return dateFormatter(date, 'MM/dd/yyyy hh:mm:ss a');
-    };
-
     useEffect(() => {
         mailService
             .getAllMails()
             .then((fetchedMails) => {
-                setMails(fetchedMails);
+                const sortedMails = fetchedMails.sort(
+                    (a, b) => b.most_recent - a.most_recent
+                );
+                setMails(sortedMails);
             })
             .catch((error) => {
                 console.error('There was an error fetching the mails!', error);
@@ -77,40 +74,15 @@ const Inbox = () => {
                 </thead>
             </table>
             <div className='inline-flex w-full h-[75vh] bg-neutral-800 border-t-0 border-2 border-gray-600'>
-                <div className='overflow-y-auto w-3/12 h-full [&::-webkit-scrollbar]:w-0.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400 '>
-                    {mails.map((mail) => (
-                        <div
-                            key={mail.id}
-                            className='flex p-4 border-b-2 border-gray-600 hover:bg-neutral-700'
-                            onClick={() => handleMailClick(mail.id)}
-                        >
-                            <MailContainer
-                                id={mail.id}
-                                sender={mail.sender}
-                                subject={mail.subject}
-                                amount={mail.amount}
-                                date={formatDate(mail.most_recent)}
-                            />
-                        </div>
-                    ))}
-                </div>
-                <div className='overflow-y-auto w-2/12 h-full [&::-webkit-scrollbar]:w-0.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400'>
-                    {recipients.map((recipient, index) => (
-                        <div
-                            key={index}
-                            className='p-1 pl-4 border-b-1 border-gray-600 text-xs hover:bg-neutral-700'
-                            onClick={() =>
-                                handleRecipientClick(
-                                    recipient.uid,
-                                    recipient.account_id
-                                )
-                            }
-                        >
-                            {recipient.recipient}
-                        </div>
-                    ))}
-                </div>
-                <div className='overflow-y-auto w-7/12 h-full [&::-webkit-scrollbar]:w-0.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400'>
+                <MailContainer
+                    mails={mails}
+                    handleMailClick={handleMailClick}
+                />
+                <RecipientContainer
+                    recipients={recipients}
+                    handleRecipientClick={handleRecipientClick}
+                />
+                <div className='custom-scrollbar w-7/12 h-full'>
                     {loading ? <div>Loading...</div> : HtmlParser(content)}
                 </div>
             </div>

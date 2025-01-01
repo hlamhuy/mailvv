@@ -43,7 +43,7 @@ const ActionBar = ({
                         type='text'
                         id='table-search'
                         className='block py-2 pl-10 text-sm border rounded-lg w-80 bg-gray-700 border-gray-600 placeholder-gray-400 text-white'
-                        placeholder='Search for items'
+                        placeholder='Search email'
                     />
                 </div>
             </div>
