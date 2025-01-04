@@ -31,11 +31,11 @@ const ImportModal = ({ isOpen, onClose, onSubmit }) => {
                         placeholder='email:password'
                     />
                     <div className='mt-4 flex justify-end space-x-2'>
-                        <button className='btn bg-gray-500' onClick={onClose}>
-                            Cancel
-                        </button>
                         <button className='btn bg-blue-500' type='submit'>
                             Submit
+                        </button>
+                        <button className='btn bg-gray-500' onClick={onClose}>
+                            Cancel
                         </button>
                     </div>
                 </form>
