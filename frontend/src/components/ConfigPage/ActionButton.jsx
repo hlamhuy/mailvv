@@ -9,6 +9,7 @@ const ActionButton = ({
     onSyncAll,
     onDeleteAll,
     selectedAccounts,
+    onExport,
 }) => {
     return (
         <div className='relative inline-block text-left z-30'>
@@ -39,6 +40,20 @@ const ActionButton = ({
                                     } block w-full text-left px-4 py-2 text-sm`}
                                 >
                                     Import
+                                </button>
+                            )}
+                        </MenuItem>
+                        <MenuItem>
+                            {({ active }) => (
+                                <button
+                                    onClick={onExport}
+                                    className={`${
+                                        active
+                                            ? 'bg-blue-400 text-gray-200'
+                                            : 'text-neutral-200'
+                                    } block w-full text-left px-4 py-2 text-sm`}
+                                >
+                                    Export
                                 </button>
                             )}
                         </MenuItem>

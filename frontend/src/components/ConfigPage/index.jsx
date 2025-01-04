@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import accountService from '../../services/accounts';
-import Modal from './ImportModal';
+import ImportModal from './ImportModal';
 import ActionBar from './ActionBar';
 import ConfigTable from './ConfigTable';
+import ExportModal from './ExportModal';
 
 const Config = () => {
     const [accounts, setAccounts] = useState([]);
     const [selectedAccounts, setSelectedAccounts] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 15;
 
     useEffect(() => {
         accountService
@@ -24,10 +28,26 @@ const Config = () => {
     }, []);
 
     const handleSelectAll = (event) => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const currentAccounts = accounts.slice(startIndex, endIndex);
+
         if (event.target.checked) {
-            setSelectedAccounts(accounts.map((account) => account.id));
+            setSelectedAccounts((prevSelected) => [
+                ...prevSelected,
+                ...currentAccounts
+                    .map((account) => account.id)
+                    .filter((id) => !prevSelected.includes(id)),
+            ]);
         } else {
-            setSelectedAccounts([]);
+            setSelectedAccounts((prevSelected) =>
+                prevSelected.filter(
+                    (id) =>
+                        !currentAccounts
+                            .map((account) => account.id)
+                            .includes(id)
+                )
+            );
         }
     };
 
@@ -73,6 +93,37 @@ const Config = () => {
             .catch((error) => {
                 console.error('There was an error adding the accounts!', error);
             });
+    };
+
+    const handleExport = (type) => {
+        let accountsToExport;
+        switch (type) {
+            case 'selected':
+                accountsToExport = accounts.filter((account) =>
+                    selectedAccounts.includes(account.id)
+                );
+                break;
+            case 'all':
+                accountsToExport = accounts;
+                break;
+            case 'alive':
+                accountsToExport = accounts.filter((account) => account.alive);
+                break;
+            default:
+                return;
+        }
+
+        const exportData = accountsToExport
+            .map((account) => `${account.user}:${account.pass}`)
+            .join('\n');
+
+        const blob = new Blob([exportData], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'accounts.txt';
+        a.click();
+        URL.revokeObjectURL(url);
     };
 
     const getDomain = (email) => {
@@ -165,25 +216,39 @@ const Config = () => {
     return (
         <div className='px-60 py-10'>
             <ActionBar
-                onImport={() => setIsModalOpen(true)}
+                onImport={() => setIsImportModalOpen(true)}
+                onExport={() => setIsExportModalOpen(true)}
                 onSyncAll={handleSyncAll}
                 onDeleteAll={handleDeleteAll}
                 onSyncSelected={handleSyncSelected}
                 onDeleteSelected={handleDeleteSelected}
                 selectedAccounts={selectedAccounts}
             />
-
+            <div>
+                {selectedAccounts.length > 0
+                    ? `Selecting ${selectedAccounts.length} account(s)`
+                    : 'Select an account to perform action'}
+            </div>
             <ConfigTable
                 accounts={accounts}
                 selectedAccounts={selectedAccounts}
                 handleSelectAll={handleSelectAll}
                 handleSelectAccount={handleSelectAccount}
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                setCurrentPage={setCurrentPage}
             />
 
-            <Modal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+            <ImportModal
+                isOpen={isImportModalOpen}
+                onClose={() => setIsImportModalOpen(false)}
                 onSubmit={handleImport}
+            />
+
+            <ExportModal
+                isOpen={isExportModalOpen}
+                onClose={() => setIsExportModalOpen(false)}
+                onSubmit={handleExport}
             />
         </div>
     );

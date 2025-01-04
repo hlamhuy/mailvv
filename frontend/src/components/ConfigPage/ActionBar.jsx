@@ -3,6 +3,7 @@ import ActionButton from './ActionButton';
 
 const ActionBar = ({
     onImport,
+    onExport,
     onSyncAll,
     onDeleteAll,
     onSyncSelected,
@@ -86,6 +87,7 @@ const ActionBar = ({
             <div className='ml-auto'>
                 <ActionButton
                     onImport={onImport}
+                    onExport={onExport}
                     onSyncAll={onSyncAll}
                     onDeleteAll={onDeleteAll}
                     onSyncSelected={onSyncSelected}

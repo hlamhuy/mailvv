@@ -6,15 +6,20 @@ const ConfigTable = ({
     selectedAccounts,
     handleSelectAll,
     handleSelectAccount,
+    currentPage,
+    itemsPerPage,
+    setCurrentPage,
 }) => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 15;
     const startIndex = (currentPage - 1) * itemsPerPage;
     const selectedAccountsPage = accounts.slice(
         startIndex,
         startIndex + itemsPerPage
     );
     const totalPages = Math.ceil(accounts.length / itemsPerPage);
+
+    const areAllAccountsSelected = selectedAccountsPage.every((account) =>
+        selectedAccounts.includes(account.id)
+    );
 
     const handleClickPage = (page) => {
         setCurrentPage(page);
@@ -39,10 +44,7 @@ const ConfigTable = ({
                                         type='checkbox'
                                         className='w-4 h-4'
                                         onChange={handleSelectAll}
-                                        checked={
-                                            selectedAccounts.length ===
-                                            accounts.length
-                                        }
+                                        checked={areAllAccountsSelected}
                                     />
                                     <label className='sr-only'>checkbox</label>
                                 </div>
