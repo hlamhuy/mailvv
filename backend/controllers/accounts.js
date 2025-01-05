@@ -31,19 +31,25 @@ router.post('/', (req, res) => {
 });
 
 // Delete an account
-router.delete('/:id', (req, res) => {
-    const { id } = req.params;
+router.delete('/', (req, res) => {
+    const { ids } = req.body; 
     const stmt = db.prepare('DELETE FROM accounts WHERE id = ?');
+    const deleteMany = db.transaction((ids) => {
+        for (const id of ids) {
+            stmt.run(id);
+        }
+    });
+
     try {
-        stmt.run(id);
-        res.json({ message: 'Account deleted successfully' });
+        deleteMany(ids);
+        res.json({ message: 'Accounts deleted successfully' });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
 
 // Delete all accounts
-router.delete('/', (req, res) => {
+router.delete('/all', (req, res) => {
     const stmt = db.prepare('DELETE FROM accounts');
     try {
         stmt.run();

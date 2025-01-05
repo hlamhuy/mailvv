@@ -10,13 +10,13 @@ const addAccount = async (account) => {
     const response = await axios.post(baseUrl, account);
     return response.data;
 };
-const removeAccount = async (id) => {
-    const response = await axios.delete(`${baseUrl}/${id}`);
+const removeAccounts = async (ids) => {
+    const response = await axios.delete(baseUrl, { data: { ids } });
     return response.data;
 };
 
 const removeAllAccounts = async () => {
-    const response = await axios.delete(baseUrl);
+    const response = await axios.delete(`${baseUrl}/all`);
     return response.data;
 };
 
@@ -27,7 +27,7 @@ const syncAccount = async (id) => {
 
 export default {
     getAllAccounts,
-    removeAccount,
+    removeAccounts,
     addAccount,
     removeAllAccounts,
     syncAccount,

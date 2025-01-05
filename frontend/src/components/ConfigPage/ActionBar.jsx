@@ -8,6 +8,7 @@ const ActionBar = ({
     onDeleteAll,
     onSyncSelected,
     onDeleteSelected,
+    onDeleteDead,
     selectedAccounts,
 }) => {
     const [isFilterSelect, setIsFilterSelect] = useState(false);
@@ -83,6 +84,12 @@ const ActionBar = ({
                     </div>
                 )}
             </div>
+            {/* Selected accounts count */}
+            <div className='ml-2 text-sm text-gray-300 font-bold'>
+                {selectedAccounts.length > 0
+                    ? `Selecting ${selectedAccounts.length} account(s)`
+                    : ''}
+            </div>
             {/* Action buttons */}
             <div className='ml-auto'>
                 <ActionButton
@@ -92,6 +99,7 @@ const ActionBar = ({
                     onDeleteAll={onDeleteAll}
                     onSyncSelected={onSyncSelected}
                     onDeleteSelected={onDeleteSelected}
+                    onDeleteDead={onDeleteDead}
                     selectedAccounts={selectedAccounts}
                 />
             </div>

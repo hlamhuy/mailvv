@@ -154,11 +154,8 @@ const Config = () => {
     };
 
     const handleDeleteSelected = () => {
-        const deletePromises = selectedAccounts.map((accountId) =>
-            accountService.removeAccount(accountId)
-        );
-
-        Promise.all(deletePromises)
+        accountService
+            .removeAccounts(selectedAccounts)
             .then(() => {
                 setAccounts((existingAccounts) =>
                     existingAccounts.filter(
@@ -167,6 +164,38 @@ const Config = () => {
                     )
                 );
                 setSelectedAccounts([]); // Clear selected accounts
+            })
+            .catch((error) => {
+                console.error(
+                    'There was an error deleting the accounts!',
+                    error
+                );
+            });
+    };
+
+    const handleDeleteDead = () => {
+        const deadAccounts = accounts.filter(
+            (account) => account.alive === false
+        );
+
+        if (deadAccounts.length === 0) {
+            console.log('Found 0 dead accounts');
+            return;
+        }
+
+        const deadAccountIds = deadAccounts.map((account) => account.id);
+        accountService
+            .removeAccounts(deadAccountIds)
+            .then(() => {
+                setAccounts((existingAccounts) =>
+                    existingAccounts.filter(
+                        (existingAccount) =>
+                            !deadAccounts.some(
+                                (deadAccount) =>
+                                    deadAccount.id === existingAccount.id
+                            )
+                    )
+                );
             })
             .catch((error) => {
                 console.error(
@@ -222,13 +251,10 @@ const Config = () => {
                 onDeleteAll={handleDeleteAll}
                 onSyncSelected={handleSyncSelected}
                 onDeleteSelected={handleDeleteSelected}
+                onDeleteDead={handleDeleteDead}
                 selectedAccounts={selectedAccounts}
             />
-            <div>
-                {selectedAccounts.length > 0
-                    ? `Selecting ${selectedAccounts.length} account(s)`
-                    : 'Select an account to perform action'}
-            </div>
+
             <ConfigTable
                 accounts={accounts}
                 selectedAccounts={selectedAccounts}
