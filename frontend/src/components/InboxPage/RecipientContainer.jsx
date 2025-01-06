@@ -4,7 +4,7 @@ const RecipientContainer = ({ recipients, handleRecipientClick }) => {
             {recipients.map((recipient, index) => (
                 <div
                     key={index}
-                    className='p-1 pl-4 text-xs hover:bg-neutral-200 hover:text-black odd:bg-neutral-800 even:bg-neutral-700'
+                    className='p-1 pl-4 text-xs hover:bg-neutral-200 hover:text-black odd:bg-neutral-800 even:bg-neutral-700 cursor-default'
                     onClick={() =>
                         handleRecipientClick(
                             recipient.uid,

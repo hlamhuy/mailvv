@@ -73,7 +73,7 @@ const Inbox = () => {
                     </tr>
                 </thead>
             </table>
-            <div className='inline-flex w-full h-[75vh] bg-neutral-800 border-t-0 border-2 border-gray-600'>
+            <div className='inline-flex w-full h-full bg-neutral-800 border-t-0 border-2 border-gray-600'>
                 <MailContainer
                     mails={mails}
                     handleMailClick={handleMailClick}

@@ -21,7 +21,6 @@ const ActionBar = ({
 
     const handleSearchChange = (event) => {
         const query = event.target.value;
-        console.log(query);
         setSearchQuery(query);
         onSearch(query); // Call onSearch with the query
     };
