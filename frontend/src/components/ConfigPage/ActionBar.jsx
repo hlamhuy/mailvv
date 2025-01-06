@@ -12,23 +12,18 @@ const ActionBar = ({
     onSearch,
     selectedAccounts,
 }) => {
-    const [isFilterSelect, setIsFilterSelect] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-
-    const toggleFilter = () => {
-        setIsFilterSelect(!isFilterSelect);
-    };
 
     const handleSearchChange = (event) => {
         const query = event.target.value;
         setSearchQuery(query);
-        onSearch(query); // Call onSearch with the query
+        onSearch(query);
     };
 
     return (
         <div className='flex flex-row items-center mx-auto w-full'>
             {/* Search bar */}
-            <div>
+            <div className='w-[28vw]'>
                 <label htmlFor='table-search' className='sr-only'>
                     Search
                 </label>
@@ -52,47 +47,12 @@ const ActionBar = ({
                     <input
                         type='text'
                         id='table-search'
-                        className='block py-2 pl-10 text-sm border rounded-lg w-80 bg-gray-700 border-gray-600 placeholder-gray-400 text-white'
+                        className='block py-2 pl-10 text-sm border rounded-lg w-full bg-gray-700 border-gray-600 placeholder-gray-400 text-white'
                         placeholder='Search email'
                         value={searchQuery}
                         onChange={handleSearchChange}
                     />
                 </div>
-            </div>
-            {/* Group Filter */}
-            <div className='ml-2 relative'>
-                <button
-                    id='filter-button'
-                    className='rounded-lg px-3 py-3 bg-gray-700 hover:bg-gray-600 '
-                    type='button'
-                    onClick={toggleFilter}
-                >
-                    <svg
-                        className='w-4 h-4'
-                        aria-hidden='true'
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        stroke='currentColor'
-                    >
-                        <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            strokeWidth='2'
-                            d='M4 6h16M4 12h16M4 18h16'
-                        />
-                    </svg>
-                </button>
-                {isFilterSelect && (
-                    <div className='absolute z-10 w-48 divide-y rounded-lg shadow bg-gray-700 divide-gray-600 mt-2'>
-                        <div className='p-3 space-y-3 text-sm text-gray-200'>
-                            <FilterOption label='Gmail' id='gmail' />
-                            <FilterOption label='Yahoo' id='yahoo' />
-                            <FilterOption label='iCloud' id='icloud' />
-                            <FilterOption label='Hotmail' id='hotmail' />
-                        </div>
-                    </div>
-                )}
             </div>
             {/* Selected accounts count */}
             <div className='ml-2 text-sm text-gray-300 font-bold'>
