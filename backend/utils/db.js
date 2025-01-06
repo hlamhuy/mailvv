@@ -1,7 +1,7 @@
 const Database = require('better-sqlite3');
 
 const initializeDatabase = () => {
-    const db = new Database('tokki.db', { verbose: console.log });
+    const db = new Database('tokki.db');
     db.exec(`
         CREATE TABLE IF NOT EXISTS accounts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -9,12 +9,21 @@ const ActionBar = ({
     onSyncSelected,
     onDeleteSelected,
     onDeleteDead,
+    onSearch,
     selectedAccounts,
 }) => {
     const [isFilterSelect, setIsFilterSelect] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const toggleFilter = () => {
         setIsFilterSelect(!isFilterSelect);
+    };
+
+    const handleSearchChange = (event) => {
+        const query = event.target.value;
+        console.log(query);
+        setSearchQuery(query);
+        onSearch(query); // Call onSearch with the query
     };
 
     return (
@@ -46,6 +55,8 @@ const ActionBar = ({
                         id='table-search'
                         className='block py-2 pl-10 text-sm border rounded-lg w-80 bg-gray-700 border-gray-600 placeholder-gray-400 text-white'
                         placeholder='Search email'
+                        value={searchQuery}
+                        onChange={handleSearchChange}
                     />
                 </div>
             </div>
@@ -140,21 +151,4 @@ const FilterOption = ({ label, id }) => {
     );
 };
 
-const Action = ({ label, onClick, disabled }) => {
-    return (
-        <div
-            className={`block px-4 py-2 text-sm ${
-                disabled
-                    ? 'text-gray-400 cursor-not-allowed'
-                    : 'text-white cursor-default hover:bg-blue-400'
-            } bg-blue-500`}
-            role='menuitem'
-            tabIndex='-1'
-            id='menu-item-0'
-            onClick={!disabled ? onClick : undefined}
-        >
-            {label}
-        </div>
-    );
-};
 export default ActionBar;

@@ -7,6 +7,7 @@ import ExportModal from './ExportModal';
 
 const Config = () => {
     const [accounts, setAccounts] = useState([]);
+    const [filteredAccounts, setFilteredAccounts] = useState([]);
     const [selectedAccounts, setSelectedAccounts] = useState([]);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -18,6 +19,7 @@ const Config = () => {
             .getAllAccounts()
             .then((accounts) => {
                 setAccounts(accounts);
+                setFilteredAccounts(accounts);
             })
             .catch((error) => {
                 console.error(
@@ -49,6 +51,13 @@ const Config = () => {
                 )
             );
         }
+    };
+
+    const handleSearch = (query) => {
+        const filtered = accounts.filter((account) =>
+            account.user.toLowerCase().includes(query.toLowerCase())
+        );
+        setFilteredAccounts(filtered);
     };
 
     const handleSelectAccount = (event, accountId) => {
@@ -247,6 +256,7 @@ const Config = () => {
             <ActionBar
                 onImport={() => setIsImportModalOpen(true)}
                 onExport={() => setIsExportModalOpen(true)}
+                onSearch={handleSearch}
                 onSyncAll={handleSyncAll}
                 onDeleteAll={handleDeleteAll}
                 onSyncSelected={handleSyncSelected}
@@ -256,7 +266,7 @@ const Config = () => {
             />
 
             <ConfigTable
-                accounts={accounts}
+                accounts={filteredAccounts}
                 selectedAccounts={selectedAccounts}
                 handleSelectAll={handleSelectAll}
                 handleSelectAccount={handleSelectAccount}
