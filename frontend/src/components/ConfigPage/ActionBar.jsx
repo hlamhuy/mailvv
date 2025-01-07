@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ActionButton from './ActionButton';
+import DisplayInfo from './DisplayInfo';
 
 const ActionBar = ({
     onImport,
@@ -11,6 +12,8 @@ const ActionBar = ({
     onDeleteDead,
     onSearch,
     selectedAccounts,
+    isSyncing,
+    isSyncingComplete,
 }) => {
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -55,11 +58,11 @@ const ActionBar = ({
                 </div>
             </div>
             {/* Selected accounts count */}
-            <div className='ml-2 text-sm text-gray-300 font-bold'>
-                {selectedAccounts.length > 0
-                    ? `Selecting ${selectedAccounts.length} account(s)`
-                    : ''}
-            </div>
+            <DisplayInfo
+                selectedAccounts={selectedAccounts}
+                isSyncing={isSyncing}
+                isSyncingComplete={isSyncingComplete}
+            />
             {/* Action buttons */}
             <div className='ml-auto'>
                 <ActionButton
@@ -73,39 +76,6 @@ const ActionBar = ({
                     selectedAccounts={selectedAccounts}
                 />
             </div>
-        </div>
-    );
-};
-
-const FilterOption = ({ label, id }) => {
-    const [checked, setChecked] = useState(false);
-
-    const handleOptionClick = () => {
-        setChecked(!checked);
-    };
-
-    const handleCheckboxClick = (event) => {
-        event.stopPropagation();
-        setChecked(!checked);
-    };
-    return (
-        <div
-            className='flex items-center cursor-pointer'
-            onClick={handleOptionClick}
-        >
-            <input
-                id={`checkbox-${id}`}
-                type='checkbox'
-                className='w-4 h-4 rounded :bg-gray-600 border-gray-500'
-                checked={checked}
-                onChange={handleCheckboxClick}
-            />
-            <label
-                htmlFor={`checkbox-${id}`}
-                className='ml-2 text-sm font-medium  text-gray-300'
-            >
-                {label}
-            </label>
         </div>
     );
 };

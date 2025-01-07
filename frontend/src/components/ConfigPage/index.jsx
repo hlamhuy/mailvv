@@ -11,6 +11,8 @@ const Config = () => {
     const [selectedAccounts, setSelectedAccounts] = useState([]);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [isSyncingComplete, setIsSyncingComplete] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 15;
 
@@ -35,6 +37,7 @@ const Config = () => {
         const currentAccounts = accounts.slice(startIndex, endIndex);
 
         if (event.target.checked) {
+            setIsSyncingComplete(false);
             setSelectedAccounts((prevSelected) => [
                 ...prevSelected,
                 ...currentAccounts
@@ -62,6 +65,7 @@ const Config = () => {
 
     const handleSelectAccount = (event, accountId) => {
         if (event.target.checked) {
+            setIsSyncingComplete(false);
             setSelectedAccounts((prevSelected) => [...prevSelected, accountId]);
         } else {
             setSelectedAccounts((prevSelected) =>
@@ -141,25 +145,83 @@ const Config = () => {
     };
 
     const handleSyncSelected = () => {
-        selectedAccounts.forEach((accountId) => {
-            accountService
-                .syncAccount(accountId)
-                .then((updatedAccount) => {
-                    setAccounts((existingAccounts) =>
-                        existingAccounts.map((existingAccount) =>
-                            existingAccount.id === updatedAccount.id
-                                ? updatedAccount
-                                : existingAccount
-                        )
-                    );
-                })
-                .catch((error) => {
-                    console.error(
-                        'There was an error syncing the account!',
-                        error
-                    );
-                });
-        });
+        setIsSyncing(true);
+        setIsSyncingComplete(false);
+        const syncPromises = selectedAccounts.map((accountId) =>
+            accountService.syncAccount(accountId)
+        );
+
+        Promise.all(syncPromises)
+            .then((updatedAccounts) => {
+                setAccounts((existingAccounts) =>
+                    existingAccounts.map(
+                        (existingAccount) =>
+                            updatedAccounts.find(
+                                (updatedAccount) =>
+                                    updatedAccount.id === existingAccount.id
+                            ) || existingAccount
+                    )
+                );
+                setFilteredAccounts((existingAccounts) =>
+                    existingAccounts.map(
+                        (existingAccount) =>
+                            updatedAccounts.find(
+                                (updatedAccount) =>
+                                    updatedAccount.id === existingAccount.id
+                            ) || existingAccount
+                    )
+                );
+            })
+            .catch((error) => {
+                console.error(
+                    'There was an error syncing the accounts!',
+                    error
+                );
+            })
+            .finally(() => {
+                setIsSyncing(false);
+                setIsSyncingComplete(true);
+            });
+    };
+
+    const handleSyncAll = () => {
+        setIsSyncing(true);
+        setIsSyncingComplete(false);
+        const syncPromises = accounts.map((account) =>
+            accountService.syncAccount(account.id)
+        );
+
+        Promise.all(syncPromises)
+            .then((updatedAccounts) => {
+                setAccounts((existingAccounts) =>
+                    existingAccounts.map(
+                        (existingAccount) =>
+                            updatedAccounts.find(
+                                (updatedAccount) =>
+                                    updatedAccount.id === existingAccount.id
+                            ) || existingAccount
+                    )
+                );
+                setFilteredAccounts((existingAccounts) =>
+                    existingAccounts.map(
+                        (existingAccount) =>
+                            updatedAccounts.find(
+                                (updatedAccount) =>
+                                    updatedAccount.id === existingAccount.id
+                            ) || existingAccount
+                    )
+                );
+            })
+            .catch((error) => {
+                console.error(
+                    'There was an error syncing the accounts!',
+                    error
+                );
+            })
+            .finally(() => {
+                setIsSyncing(false);
+                setIsSyncingComplete(true);
+            });
     };
 
     const handleDeleteSelected = () => {
@@ -214,29 +276,6 @@ const Config = () => {
             });
     };
 
-    const handleSyncAll = () => {
-        // Sync all accounts one by one
-        accounts.forEach((account) => {
-            accountService
-                .syncAccount(account.id)
-                .then((updatedAccount) => {
-                    setAccounts((existingAccounts) =>
-                        existingAccounts.map((existingAccount) =>
-                            existingAccount.id === updatedAccount.id
-                                ? updatedAccount
-                                : existingAccount
-                        )
-                    );
-                })
-                .catch((error) => {
-                    console.error(
-                        'There was an error syncing the account!',
-                        error
-                    );
-                });
-        });
-    };
-
     const handleDeleteAll = () => {
         accountService
             .removeAllAccounts()
@@ -263,6 +302,8 @@ const Config = () => {
                 onDeleteSelected={handleDeleteSelected}
                 onDeleteDead={handleDeleteDead}
                 selectedAccounts={selectedAccounts}
+                isSyncing={isSyncing}
+                isSyncingComplete={isSyncingComplete}
             />
 
             <ConfigTable

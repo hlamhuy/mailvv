@@ -1,7 +1,6 @@
 const { ImapFlow } = require('imapflow');
 const { getHost } = require('./host');
 
-
 const syncAccount = async (db, accountId) => {
     const account = db
         .prepare('SELECT * FROM accounts WHERE id = ?')
@@ -27,13 +26,13 @@ const syncAccount = async (db, accountId) => {
             const status = await client.status('INBOX', { messages: true });
             const prevAmount = account.amount;
             const newAmount = status.messages;
-            console.log('Current prev amount: ', prevAmount);
-            console.log('Current new amount: ', newAmount);
+            //console.log('Current prev amount: ', prevAmount);
+            //console.log('Current new amount: ', newAmount);
             const start =
                 prevAmount === 0 && newAmount > 200
                     ? newAmount - 200
                     : prevAmount + 1;
-            console.log('Start point: ', start);
+            //console.log('Start point: ', start);
 
             // fetch new messages
             let messages = await client.fetchAll(`${start}:*`, {
@@ -44,7 +43,7 @@ const syncAccount = async (db, accountId) => {
             // insert messages to db
             for (const mail of messages) {
                 // check if mail already exists in db, then insert into mails table
-                console.log('Mail subject: ', mail.envelope.subject);
+                //console.log('Mail subject: ', mail.envelope.subject);
                 let insertedId = mailInsert(db, mail);
 
                 // insert into origins table
