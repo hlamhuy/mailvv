@@ -268,6 +268,7 @@ const Config = () => {
             <ConfigTable
                 accounts={filteredAccounts}
                 selectedAccounts={selectedAccounts}
+                setSelectedAccounts={setSelectedAccounts}
                 handleSelectAll={handleSelectAll}
                 handleSelectAccount={handleSelectAccount}
                 currentPage={currentPage}

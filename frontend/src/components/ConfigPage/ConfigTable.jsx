@@ -4,12 +4,15 @@ import PageNavigation from './PageNavigation';
 const ConfigTable = ({
     accounts,
     selectedAccounts,
+    setSelectedAccounts,
     handleSelectAll,
     handleSelectAccount,
     currentPage,
     itemsPerPage,
     setCurrentPage,
 }) => {
+    const [lastSelectedIndex, setLastSelectedIndex] = useState(null);
+
     const startIndex = (currentPage - 1) * itemsPerPage;
     const selectedAccountsPage = accounts.slice(
         startIndex,
@@ -23,6 +26,25 @@ const ConfigTable = ({
 
     const handleClickPage = (page) => {
         setCurrentPage(page);
+    };
+
+    const handleCheckboxChange = (event, accountId, index) => {
+        if (window.event.shiftKey && lastSelectedIndex !== null) {
+            const start = Math.min(lastSelectedIndex, index);
+            const end = Math.max(lastSelectedIndex, index);
+            const newSelectedAccounts = [...selectedAccounts];
+            for (let i = start; i <= end; i++) {
+                const account = selectedAccountsPage[i];
+                if (!newSelectedAccounts.includes(account.id)) {
+                    newSelectedAccounts.push(account.id);
+                }
+            }
+
+            setSelectedAccounts(newSelectedAccounts);
+        } else {
+            handleSelectAccount(event, accountId);
+        }
+        setLastSelectedIndex(index);
     };
 
     const formatDate = (timestamp) => {
@@ -64,7 +86,7 @@ const ConfigTable = ({
                         </tr>
                     </thead>
                     <tbody>
-                        {selectedAccountsPage.map((account) => (
+                        {selectedAccountsPage.map((account, index) => (
                             <tr
                                 key={account.id}
                                 className='odd:bg-gray-800 even:bg-gray-700 border-b border-gray-700'
@@ -76,9 +98,10 @@ const ConfigTable = ({
                                             type='checkbox'
                                             className='w-4 h-4'
                                             onChange={(event) =>
-                                                handleSelectAccount(
+                                                handleCheckboxChange(
                                                     event,
-                                                    account.id
+                                                    account.id,
+                                                    index
                                                 )
                                             }
                                             checked={selectedAccounts.includes(
