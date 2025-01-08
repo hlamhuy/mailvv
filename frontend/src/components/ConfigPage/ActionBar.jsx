@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ActionButton from './ActionButton';
-import DisplayInfo from './DisplayInfo';
+import ActionMessage from './ActionMessage';
 
 const ActionBar = ({
     onImport,
@@ -12,8 +12,7 @@ const ActionBar = ({
     onDeleteDead,
     onSearch,
     selectedAccounts,
-    isSyncing,
-    isSyncingComplete,
+    message,
 }) => {
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -58,10 +57,8 @@ const ActionBar = ({
                 </div>
             </div>
             {/* Selected accounts count */}
-            <DisplayInfo
-                selectedAccounts={selectedAccounts}
-                isSyncing={isSyncing}
-                isSyncingComplete={isSyncingComplete}
+            <ActionMessage
+                message={message}
             />
             {/* Action buttons */}
             <div className='ml-auto'>

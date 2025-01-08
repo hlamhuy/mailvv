@@ -11,8 +11,7 @@ const Config = () => {
     const [selectedAccounts, setSelectedAccounts] = useState([]);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-    const [isSyncing, setIsSyncing] = useState(false);
-    const [isSyncingComplete, setIsSyncingComplete] = useState(false);
+    const [actionMessage, setActionMessage] = useState({ text: '', color: '' });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 15;
 
@@ -37,22 +36,33 @@ const Config = () => {
         const currentAccounts = accounts.slice(startIndex, endIndex);
 
         if (event.target.checked) {
-            setIsSyncingComplete(false);
-            setSelectedAccounts((prevSelected) => [
-                ...prevSelected,
-                ...currentAccounts
-                    .map((account) => account.id)
-                    .filter((id) => !prevSelected.includes(id)),
-            ]);
+            setSelectedAccounts((prevSelected) => {
+                const newSelected = [
+                    ...prevSelected,
+                    ...currentAccounts
+                        .map((account) => account.id)
+                        .filter((id) => !prevSelected.includes(id)),
+                ];
+                setActionMessage({
+                    text: `Selecting ${newSelected.length} account(s)`,
+                    color: 'text-gray-300',
+                });
+                return newSelected;
+            });
         } else {
-            setSelectedAccounts((prevSelected) =>
-                prevSelected.filter(
+            setSelectedAccounts((prevSelected) => {
+                const newSelected = prevSelected.filter(
                     (id) =>
                         !currentAccounts
                             .map((account) => account.id)
                             .includes(id)
-                )
-            );
+                );
+                setActionMessage({
+                    text: `Selecting ${newSelected.length} account(s)`,
+                    color: 'text-gray-300',
+                });
+                return newSelected;
+            });
         }
     };
 
@@ -65,13 +75,25 @@ const Config = () => {
 
     const handleSelectAccount = (event, accountId) => {
         if (event.target.checked) {
-            setIsSyncingComplete(false);
-            //console.log('Adding account to selected: ', accounts);
-            setSelectedAccounts((prevSelected) => [...prevSelected, accountId]);
+            setSelectedAccounts((prevSelected) => {
+                const newSelected = [...prevSelected, accountId];
+                setActionMessage({
+                    text: `Selecting ${newSelected.length} account(s)`,
+                    color: 'text-gray-300',
+                });
+                return newSelected;
+            });
         } else {
-            setSelectedAccounts((prevSelected) =>
-                prevSelected.filter((id) => id !== accountId)
-            );
+            setSelectedAccounts((prevSelected) => {
+                const newSelected = prevSelected.filter(
+                    (id) => id !== accountId
+                );
+                setActionMessage({
+                    text: `Selecting ${newSelected.length} account(s)`,
+                    color: 'text-gray-300',
+                });
+                return newSelected;
+            });
         }
     };
 
@@ -92,10 +114,7 @@ const Config = () => {
             (newAccount) =>
                 !accounts.some((account) => account.user === newAccount.user)
         );
-        console.log(
-            'Duplicate entries: ',
-            newAccounts.length - accountsToAdd.length
-        );
+
         accountService
             .addAccount(accountsToAdd)
             .then(() => {
@@ -103,9 +122,17 @@ const Config = () => {
                     ...existingAccounts,
                     ...newAccounts,
                 ]);
+                setActionMessage({
+                    text: `${accountsToAdd.length} account(s) imported successfully`,
+                    color: 'text-green-300',
+                });
             })
             .catch((error) => {
                 console.error('There was an error adding the accounts!', error);
+                setActionMessage({
+                    text: 'ERROR ADDING ACCOUNT!! Please ensure you have correct account format then try again.',
+                    color: 'text-red-500',
+                });
             });
     };
 
@@ -138,6 +165,10 @@ const Config = () => {
         a.download = 'accounts.txt';
         a.click();
         URL.revokeObjectURL(url);
+        setActionMessage({
+            text: `${accountsToExport.length} account(s) exported successfully'`,
+            color: 'text-green-500',
+        });
     };
 
     const getDomain = (email) => {
@@ -146,8 +177,10 @@ const Config = () => {
     };
 
     const handleSyncSelected = () => {
-        setIsSyncing(true);
-        setIsSyncingComplete(false);
+        setActionMessage({
+            text: `Syncing ${selectedAccounts.length} account(s)...`,
+            color: 'text-yellow-400',
+        });
         const syncPromises = selectedAccounts.map((accountId) =>
             accountService.syncAccount(accountId)
         );
@@ -172,22 +205,29 @@ const Config = () => {
                             ) || existingAccount
                     )
                 );
+                setActionMessage({
+                    text: `Complete syncing ${selectedAccounts.length} account(s)!!`,
+                    color: 'text-green-500',
+                });
             })
             .catch((error) => {
                 console.error(
-                    'There was an error syncing the accounts!',
+                    'There was an error syncing the account(s)!',
                     error
                 );
-            })
-            .finally(() => {
-                setIsSyncing(false);
-                setIsSyncingComplete(true);
+                setActionMessage({
+                    text: 'ERROR SYNCING ACCOUNT!!',
+                    color: 'text-red-500',
+                });
             });
     };
 
     const handleSyncAll = () => {
-        setIsSyncing(true);
-        setIsSyncingComplete(false);
+        setActionMessage({
+            text: `Syncing ${accounts.length} account(s). May take a while...`,
+            color: 'text-yellow-400',
+        });
+
         const syncPromises = accounts.map((account) =>
             accountService.syncAccount(account.id)
         );
@@ -212,16 +252,20 @@ const Config = () => {
                             ) || existingAccount
                     )
                 );
+                setActionMessage({
+                    text: 'Complete syncing all accounts!!',
+                    color: 'text-green-500',
+                });
             })
             .catch((error) => {
                 console.error(
-                    'There was an error syncing the accounts!',
+                    'There was an error syncing the account(s)!',
                     error
                 );
-            })
-            .finally(() => {
-                setIsSyncing(false);
-                setIsSyncingComplete(true);
+                setActionMessage({
+                    text: 'ERROR SYNCING ACCOUNT!!',
+                    color: 'text-red-500',
+                });
             });
     };
 
@@ -229,19 +273,26 @@ const Config = () => {
         accountService
             .removeAccounts(selectedAccounts)
             .then(() => {
-                setAccounts((existingAccounts) =>
-                    existingAccounts.filter(
-                        (existingAccount) =>
-                            !selectedAccounts.includes(existingAccount.id)
-                    )
+                const updatedAccounts = accounts.filter(
+                    (account) => !selectedAccounts.includes(account.id)
                 );
-                setSelectedAccounts([]); // Clear selected accounts
+                setAccounts(updatedAccounts);
+                setFilteredAccounts(updatedAccounts);
+                setSelectedAccounts([]);
+                setActionMessage({
+                    text: `${selectedAccounts.length} account(s) deleted successfully`,
+                    color: 'text-green-500',
+                });
             })
             .catch((error) => {
                 console.error(
-                    'There was an error deleting the accounts!',
+                    'There was an error deleting the account(s)!',
                     error
                 );
+                setActionMessage({
+                    text: 'ERROR DELETING ACCOUNT!!',
+                    color: 'text-red-500',
+                });
             });
     };
 
@@ -249,7 +300,7 @@ const Config = () => {
         const deadAccounts = accounts.filter((account) => account.alive === 0);
 
         if (deadAccounts.length === 0) {
-            console.log('Found 0 dead accounts');
+            setActionMessage({ text: 'No bad accounts found!', color: 'gray' });
             return;
         }
 
@@ -257,21 +308,25 @@ const Config = () => {
         accountService
             .removeAccounts(deadAccountIds)
             .then(() => {
-                setAccounts((existingAccounts) =>
-                    existingAccounts.filter(
-                        (existingAccount) =>
-                            !deadAccounts.some(
-                                (deadAccount) =>
-                                    deadAccount.id === existingAccount.id
-                            )
-                    )
+                const updatedAccounts = accounts.filter(
+                    (account) => !deadAccountIds.includes(account.id)
                 );
+                setAccounts(updatedAccounts);
+                setFilteredAccounts(updatedAccounts);
+                setActionMessage({
+                    text: `${deadAccounts.length} account(s) deleted successfully`,
+                    color: 'text-green-500',
+                });
             })
             .catch((error) => {
                 console.error(
                     'There was an error deleting the accounts!',
                     error
                 );
+                setActionMessage({
+                    text: 'ERROR DELETING ACCOUNT!!',
+                    color: 'text-red-500',
+                });
             });
     };
 
@@ -280,12 +335,21 @@ const Config = () => {
             .removeAllAccounts()
             .then(() => {
                 setAccounts([]);
+                setFilteredAccounts([]);
+                setActionMessage({
+                    text: 'All accounts deleted successfully',
+                    color: 'text-green-500',
+                });
             })
             .catch((error) => {
                 console.error(
                     'There was an error deleting the accounts!',
                     error
                 );
+                setActionMessage({
+                    text: 'ERROR DELETING ACCOUNT!!',
+                    color: 'text-red-500',
+                });
             });
     };
 
@@ -301,8 +365,7 @@ const Config = () => {
                 onDeleteSelected={handleDeleteSelected}
                 onDeleteDead={handleDeleteDead}
                 selectedAccounts={selectedAccounts}
-                isSyncing={isSyncing}
-                isSyncingComplete={isSyncingComplete}
+                message={actionMessage}
             />
 
             <ConfigTable

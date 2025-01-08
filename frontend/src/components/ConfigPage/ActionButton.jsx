@@ -60,7 +60,7 @@ const ActionButton = ({
         setDialogConfig({
             title: 'Sync All Accounts',
             description:
-                'Are you sure you want to sync all accounts? This action will update all account data.',
+                'Are you sure you want to sync all accounts? This might take a while depending on the number of accounts. It is recommended to sync only the accounts you need.',
             confirmText: 'Sync',
             icon: <ArrowPathIcon className='size-6 text-blue-600' />,
             onConfirm: onSyncAll,

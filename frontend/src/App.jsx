@@ -8,7 +8,7 @@ const App = () => {
         <Router>
             <div className='bg-custom-bg min-h-screen text-white'>
                 <div className='bg-blue-700 p-4 flex justify-center items-center'>
-                    <h1 className='text-4xl font-bold'>Mailvv</h1>
+                    <h1 className='text-4xl font-bold'>MailVV</h1>
                 </div>
                 <div className='block px-60 bg-nav-bg'>
                     <nav className='flex space-x-8  p-4'>
