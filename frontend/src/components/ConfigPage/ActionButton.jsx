@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import AccountDeleteConfirmation from './Dialogs';
 
 const ActionButton = ({
     onImport,
@@ -12,6 +13,31 @@ const ActionButton = ({
     onExport,
     onDeleteDead,
 }) => {
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [deleteAction, setDeleteAction] = useState(null);
+
+    const handleDeleteSelected = () => {
+        setDeleteAction(() => onDeleteSelected);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleDeleteAll = () => {
+        setDeleteAction(() => onDeleteAll);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleDeleteDead = () => {
+        setDeleteAction(() => onDeleteDead);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        if (deleteAction) {
+            deleteAction();
+        }
+        setIsDeleteDialogOpen(false);
+    };
+
     return (
         <div className='relative inline-block text-left z-30'>
             <Menu as='div' className='relative inline-block text-left'>
@@ -73,7 +99,7 @@ const ActionButton = ({
                     <div className='py-1'>
                         <MenuItem className='hover:bg-blue-400 hover:text-gray-200'>
                             <button
-                                onClick={onDeleteSelected}
+                                onClick={handleDeleteSelected}
                                 disabled={selectedAccounts.length === 0}
                                 className={`${
                                     selectedAccounts.length === 0
@@ -86,7 +112,7 @@ const ActionButton = ({
                         </MenuItem>
                         <MenuItem className='hover:bg-blue-400 hover:text-gray-200'>
                             <button
-                                onClick={onDeleteDead}
+                                onClick={handleDeleteDead}
                                 className='text-neutral-200 block w-full text-left px-4 py-2 text-sm'
                             >
                                 Delete Bad Accounts
@@ -94,7 +120,7 @@ const ActionButton = ({
                         </MenuItem>
                         <MenuItem className='hover:bg-blue-400 hover:text-gray-200'>
                             <button
-                                onClick={onDeleteAll}
+                                onClick={handleDeleteAll}
                                 className='text-neutral-200 block w-full text-left px-4 py-2 text-sm'
                             >
                                 Delete All
@@ -103,6 +129,12 @@ const ActionButton = ({
                     </div>
                 </MenuItems>
             </Menu>
+
+            <AccountDeleteConfirmation
+                open={isDeleteDialogOpen}
+                onClose={() => setIsDeleteDialogOpen(false)}
+                onDelete={handleConfirmDelete}
+            />
         </div>
     );
 };
