@@ -5,9 +5,16 @@ import {
     DialogTitle,
     DialogBackdrop,
 } from '@headlessui/react';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
-const AccountDeleteConfirmation = ({ open, onClose, onDelete }) => {
+const ConfirmationDialog = ({
+    open,
+    onClose,
+    onConfirm,
+    title,
+    description,
+    confirmText,
+    icon,
+}) => {
     return (
         <Dialog open={open} onClose={onClose} className='relative z-10'>
             <DialogBackdrop
@@ -23,25 +30,25 @@ const AccountDeleteConfirmation = ({ open, onClose, onDelete }) => {
                     >
                         <div className='bg-slate-700 px-4 pb-4 pt-5 sm:p-6 sm:pb-4'>
                             <div className='sm:flex sm:items-start'>
-                                <div className='mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10'>
-                                    <ExclamationTriangleIcon
-                                        aria-hidden='true'
-                                        className='size-6 text-red-600'
-                                    />
+                                <div
+                                    className={`mx-auto flex size-12 shrink-0 items-center justify-center rounded-full ${
+                                        confirmText === 'Delete'
+                                            ? 'bg-red-200'
+                                            : 'bg-blue-200'
+                                    } sm:mx-0 sm:size-10`}
+                                >
+                                    {icon}
                                 </div>
                                 <div className='mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left'>
                                     <DialogTitle
                                         as='h3'
                                         className='text-base font-semibold text-gray-50'
                                     >
-                                        Delete account
+                                        {title}
                                     </DialogTitle>
                                     <div className='mt-2'>
                                         <p className='text-sm text-gray-300'>
-                                            Are you sure you want to delete your
-                                            account? All of your data will be
-                                            permanently removed. This action
-                                            cannot be undone.
+                                            {description}
                                         </p>
                                     </div>
                                 </div>
@@ -51,17 +58,21 @@ const AccountDeleteConfirmation = ({ open, onClose, onDelete }) => {
                             <button
                                 type='button'
                                 data-autofocus
-                                onClick={onDelete}
+                                onClick={onClose}
                                 className='btn text-white bg-gray-400 hover:bg-gray-500'
                             >
                                 Cancel
                             </button>
                             <button
                                 type='button'
-                                onClick={onDelete}
-                                className='btn text-gray-100 bg-red-500 hover:bg-red-600 mr-2'
+                                onClick={onConfirm}
+                                className={`btn text-gray-100 ${
+                                    confirmText === 'Delete'
+                                        ? 'bg-red-700 hover:bg-red-800'
+                                        : 'bg-blue-700 hover:bg-blue-800'
+                                }  mr-2`}
                             >
-                                Delete
+                                {confirmText}
                             </button>
                         </div>
                     </DialogPanel>
@@ -71,4 +82,4 @@ const AccountDeleteConfirmation = ({ open, onClose, onDelete }) => {
     );
 };
 
-export default AccountDeleteConfirmation;
+export default ConfirmationDialog;

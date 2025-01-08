@@ -66,6 +66,7 @@ const Config = () => {
     const handleSelectAccount = (event, accountId) => {
         if (event.target.checked) {
             setIsSyncingComplete(false);
+            //console.log('Adding account to selected: ', accounts);
             setSelectedAccounts((prevSelected) => [...prevSelected, accountId]);
         } else {
             setSelectedAccounts((prevSelected) =>
@@ -245,9 +246,7 @@ const Config = () => {
     };
 
     const handleDeleteDead = () => {
-        const deadAccounts = accounts.filter(
-            (account) => account.alive === false
-        );
+        const deadAccounts = accounts.filter((account) => account.alive === 0);
 
         if (deadAccounts.length === 0) {
             console.log('Found 0 dead accounts');

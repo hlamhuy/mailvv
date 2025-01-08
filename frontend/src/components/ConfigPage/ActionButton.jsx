@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
-import AccountDeleteConfirmation from './Dialogs';
+import {
+    ExclamationTriangleIcon,
+    ArrowPathIcon,
+} from '@heroicons/react/24/outline';
+import ConfirmationDialog from './Dialogs';
 
 const ActionButton = ({
     onImport,
@@ -13,29 +17,62 @@ const ActionButton = ({
     onExport,
     onDeleteDead,
 }) => {
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [deleteAction, setDeleteAction] = useState(null);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [dialogConfig, setDialogConfig] = useState({});
 
     const handleDeleteSelected = () => {
-        setDeleteAction(() => onDeleteSelected);
-        setIsDeleteDialogOpen(true);
+        setDialogConfig({
+            title: 'Delete Selected Accounts',
+            description:
+                'Are you sure you want to delete the selected accounts? This action cannot be undone.',
+            confirmText: 'Delete',
+            icon: <ExclamationTriangleIcon className='size-6 text-red-600' />,
+            onConfirm: onDeleteSelected,
+        });
+        setIsDialogOpen(true);
     };
 
     const handleDeleteAll = () => {
-        setDeleteAction(() => onDeleteAll);
-        setIsDeleteDialogOpen(true);
+        setDialogConfig({
+            title: 'Delete All Accounts',
+            description:
+                'Are you sure you want to delete all accounts? This action cannot be undone.',
+            confirmText: 'Delete',
+            icon: <ExclamationTriangleIcon className='size-6 text-red-600' />,
+            onConfirm: onDeleteAll,
+        });
+        setIsDialogOpen(true);
     };
 
     const handleDeleteDead = () => {
-        setDeleteAction(() => onDeleteDead);
-        setIsDeleteDialogOpen(true);
+        setDialogConfig({
+            title: 'Delete Bad Accounts',
+            description:
+                'Are you sure you want to delete all bad accounts? This action cannot be undone.',
+            confirmText: 'Delete',
+            icon: <ExclamationTriangleIcon className='size-6 text-red-600' />,
+            onConfirm: onDeleteDead,
+        });
+        setIsDialogOpen(true);
     };
 
-    const handleConfirmDelete = () => {
-        if (deleteAction) {
-            deleteAction();
+    const handleSyncAll = () => {
+        setDialogConfig({
+            title: 'Sync All Accounts',
+            description:
+                'Are you sure you want to sync all accounts? This action will update all account data.',
+            confirmText: 'Sync',
+            icon: <ArrowPathIcon className='size-6 text-blue-600' />,
+            onConfirm: onSyncAll,
+        });
+        setIsDialogOpen(true);
+    };
+
+    const handleConfirm = () => {
+        if (dialogConfig.onConfirm) {
+            dialogConfig.onConfirm();
         }
-        setIsDeleteDialogOpen(false);
+        setIsDialogOpen(false);
     };
 
     return (
@@ -89,7 +126,7 @@ const ActionButton = ({
                         </MenuItem>
                         <MenuItem className='hover:bg-blue-400 hover:text-gray-200'>
                             <button
-                                onClick={onSyncAll}
+                                onClick={handleSyncAll}
                                 className='text-neutral-200 block w-full text-left px-4 py-2 text-sm'
                             >
                                 Sync All
@@ -130,10 +167,14 @@ const ActionButton = ({
                 </MenuItems>
             </Menu>
 
-            <AccountDeleteConfirmation
-                open={isDeleteDialogOpen}
-                onClose={() => setIsDeleteDialogOpen(false)}
-                onDelete={handleConfirmDelete}
+            <ConfirmationDialog
+                open={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                onConfirm={handleConfirm}
+                title={dialogConfig.title}
+                description={dialogConfig.description}
+                confirmText={dialogConfig.confirmText}
+                icon={dialogConfig.icon}
             />
         </div>
     );
