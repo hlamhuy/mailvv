@@ -15,7 +15,7 @@ const syncAccount = async (db, accountId) => {
       user: account.user,
       pass: account.pass,
     },
-    //logger: false,
+    logger: false,
   });
 
   try {
