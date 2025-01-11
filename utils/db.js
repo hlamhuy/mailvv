@@ -1,8 +1,8 @@
-const Database = require('better-sqlite3');
+import Database from "better-sqlite3";
 
 const initializeDatabase = () => {
-    const db = new Database('tokki.db');
-    db.exec(`
+  const db = new Database("tokki.db");
+  db.exec(`
         CREATE TABLE IF NOT EXISTS accounts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user TEXT NOT NULL,
@@ -15,7 +15,7 @@ const initializeDatabase = () => {
         );
     `);
 
-    db.exec(`
+  db.exec(`
         CREATE TABLE IF NOT EXISTS mails (
             id INTEGER PRIMARY KEY AUTOINCREMENT,            
             subject TEXT NOT NULL,
@@ -26,7 +26,7 @@ const initializeDatabase = () => {
         );
     `);
 
-    db.exec(`
+  db.exec(`
         CREATE TABLE IF NOT EXISTS origins (
             mail_id INTEGER NOT NULL,
             account_id INTEGER NOT NULL,
@@ -40,7 +40,7 @@ const initializeDatabase = () => {
         );
     `);
 
-    db.exec(`
+  db.exec(`
         CREATE TRIGGER IF NOT EXISTS update_mail_info
         AFTER INSERT ON origins
         FOR EACH ROW
@@ -54,4 +54,4 @@ const initializeDatabase = () => {
     `);
 };
 
-module.exports = { initializeDatabase };
+export default initializeDatabase;
