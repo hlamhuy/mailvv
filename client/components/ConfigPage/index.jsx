@@ -118,10 +118,14 @@ const Config = () => {
         accountService
             .addAccount(accountsToAdd)
             .then(() => {
-                setAccounts((existingAccounts) => [
-                    ...existingAccounts,
-                    ...newAccounts,
-                ]);
+                setAccounts((existingAccounts) => {
+                    const updatedAccounts = [
+                        ...existingAccounts,
+                        ...newAccounts,
+                    ];
+                    setFilteredAccounts(updatedAccounts);
+                    return updatedAccounts;
+                });
                 setActionMessage({
                     text: `${accountsToAdd.length} account(s) imported successfully`,
                     color: 'text-green-300',

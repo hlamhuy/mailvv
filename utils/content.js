@@ -1,6 +1,6 @@
-const { ImapFlow } = require('imapflow');
-const { getHost } = require('./host');
-const { simpleParser } = require('mailparser');
+import { ImapFlow } from 'imapflow';
+import getHost from './host.js';
+import { simpleParser } from 'mailparser';
 
 const getContent = async (uid, account) => {
     const host = getHost(account.domain);
@@ -38,4 +38,4 @@ const getContent = async (uid, account) => {
     }
 };
 
-module.exports = { getContent };
+export default getContent;
